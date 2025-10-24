@@ -13,7 +13,21 @@
         "192": "./icons/android-chrome-192x192.png",
         "512": "./icons/android-chrome-512x512.png"
     },
+    "host_permissions": [
+        "https://www.youtube.com/*"
+    ],
     "permissions": [
-        "storage"
+        "storage",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.youtube.com/*"
+            ],
+            "js": [
+                "./youtube/content.js"
+            ]
+        }
     ]
 }
