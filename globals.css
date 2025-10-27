@@ -1,4 +1,9 @@
  /* GLOBAL STYLING FOR THE EXTENSION  */
+ @font-face {
+     font-family: "Custom";
+     src: url("./assets/fonts/Inter-VariableFont_opsz,wght.ttf");
+ }
+
  :root {
      --color-neutral-bg: #f8f5f2;
      --color-surface: #fcfaf8;
@@ -28,14 +33,4 @@
  body {
      background-color: var(--color-neutral-bg);
      color: var(--color-text);
- }
-
- body.popup-html {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: start;
-     height: 32em;
-     width: 28em;
-
  }

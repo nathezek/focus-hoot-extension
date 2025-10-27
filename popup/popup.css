@@ -1,0 +1,33 @@
+body.popup-html {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: 32em;
+    width: 28em;
+
+}
+
+body.popup-html .form-container {
+    width: 100%;
+    height: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em 0;
+}
+
+input {
+    border: 1px solid var(--color-accent-2);
+    border-radius: 8px;
+    padding: 4px;
+    height: 2em;
+    background: transparent;
+    color: var(--color-text);
+}
+
+button {
+    height: 2em;
+    width: 100%;
+
+}
