@@ -57,6 +57,7 @@ startBtn.addEventListener("click", () => {
     startCountdown(endTime);
 });
 
+
 function startCountdown(endTime) {
     const interval = setInterval(() => {
         const remaining = Math.floor((endTime - Date.now()) / 1000);
@@ -64,10 +65,19 @@ function startCountdown(endTime) {
         if (remaining <= 0) {
             clearInterval(interval);
             updateTimerUI(0);
-            saveState({ isRunning: false });
+
+            // 🧽 Clear the goal and reset state
+            goalInput.value = "";
+            saveState({ goal: "", endTime: null, isRunning: false });
+
+            // ✅ Visual feedback
+            startBtn.textContent = "Session Complete 🎉";
+            setTimeout(() => (startBtn.textContent = "Start Session"), 2000);
+
             return;
         }
 
         updateTimerUI(remaining);
     }, 1000);
 }
+
