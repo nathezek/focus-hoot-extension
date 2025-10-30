@@ -1,4 +1,5 @@
 
+// ai/analyzer.js
 export async function analyzeContent(title, description, goal) {
     console.log("[Focus Hoot AI] Analyzing content…");
 
@@ -6,18 +7,20 @@ export async function analyzeContent(title, description, goal) {
     if (!("ai" in self) || !self.ai?.languageModel) {
         console.warn("[Focus Hoot AI] Chrome AI not available, using mock analysis.");
         const random = Math.random() > 0.5 ? "pass" : "block";
-        return { verdict: random, reason: random === "block" ? "Seems off-topic." : "Looks related enough." };
+        return {
+            verdict: random,
+            reason: random === "block" ? "Seems off-topic." : "Looks related enough."
+        };
     }
 
     try {
         // --- 1️⃣ Load the on-device or cloud model ---
         const session = await self.ai.languageModel.create({
-            // "on-device" is preferred for speed & privacy
             model: "on-device",
             temperature: 0.2
         });
 
-        // --- 2️⃣ Build a short, focused prompt ---
+        // --- 2️⃣ Build prompt ---
         const prompt = `
       You are Focus Hoot, an AI that keeps students on track.
       The user is studying: "${goal}"
@@ -44,12 +47,14 @@ export async function analyzeContent(title, description, goal) {
 
         console.log("[Focus Hoot AI] Verdict:", verdict, "| Reason:", reason);
         return { verdict, reason };
-
     } catch (err) {
         console.error("[Focus Hoot AI] Error using Chrome AI:", err);
         // fallback if AI fails
         const random = Math.random() > 0.5 ? "pass" : "block";
-        return { verdict: random, reason: random === "block" ? "Fallback random block." : "Fallback random pass." };
+        return {
+            verdict: random,
+            reason: random === "block" ? "Fallback random block." : "Fallback random pass."
+        };
     }
 }
 

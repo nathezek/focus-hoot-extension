@@ -1,28 +1,91 @@
  /* GLOBAL STYLING FOR THE EXTENSION  */
  @font-face {
      font-family: "Custom";
-     src: url("./assets/fonts/Inter-VariableFont_opsz,wght.ttf");
+     src: url("./assets/fonts/JetBrainsMono-VariableFont_wght.ttf");
  }
 
  :root {
-     --color-neutral-bg: #f8f5f2;
-     --color-surface: #fcfaf8;
-     --color-text: #575655;
-     --color-text-muted: #6b625c;
-     --color-secondary: #efe7df;
-     --color-accent: #c4672a;
-     --color-accent-2: #d07a40;
+     /*
+  |-------------------------------------|
+  | LIGHT THEME (Default)               |
+  |-------------------------------------|
+  */
+
+     /* PRIMARY COLOR (Owl Head Brown: #A66B3F) */
+     --color-primary: #A66B3F;
+     --color-primary-light: #DB9A6E;
+     --color-primary-dark: #73482A;
+     --color-on-primary: #FFFFFF;
+     /* White text/icons on primary */
+
+     /* SECONDARY/SURFACE COLOR (Owl Face/Feathers: #F7DDA4) */
+     --color-secondary: #F7DDA4;
+     --color-secondary-dark: #C0AC78;
+     --color-on-secondary: #212121;
+     /* Dark text/icons on secondary */
+
+     /* ACCENT/ACTION COLOR (Owl Beak Orange: #F28D30) */
+     --color-accent: #F28D30;
+     --color-accent-light: #FFBE62;
+     --color-on-accent: #FFFFFF;
+
+     /* SURFACE & BACKGROUND */
+     --color-surface: #FFFFFF;
+     /* Cards, sheets, menus */
+     --color-neutral-bg: #FFFDF7;
+     /* Main window background (off-white) */
+
+     /* TEXT & ICONOGRAPHY */
+     --color-text: #212121;
+     /* General body text (Dark Gray) */
+     --color-text-muted: #575655;
+     /* Secondary text, hints */
+
+     /* UTILITY */
+     --color-error: #B00020;
  }
 
  @media (prefers-color-scheme: dark) {
      :root {
-         --color-neutral-bg: #1f1d1b;
+         /*
+    |-------------------------------------|
+    | DARK THEME                          |
+    |-------------------------------------|
+    */
+
+         /* PRIMARY COLOR (Brighter Brown: #DB9A6E) */
+         --color-primary: #DB9A6E;
+         --color-primary-light: #FFC99C;
+         --color-primary-dark: #A66B3F;
+         --color-on-primary: #212121;
+         /* Dark text/icons on primary */
+
+         /* SECONDARY/SURFACE COLOR (Darker Brown: #401F00) */
+         --color-secondary: #401F00;
+         --color-secondary-dark: #331A00;
+         --color-on-secondary: #FFFFFF;
+         /* White text/icons on secondary */
+
+         /* ACCENT/ACTION COLOR (Brighter Orange: #FFBE62) */
+         --color-accent: #FFBE62;
+         --color-accent-light: #FFE9B3;
+         --color-on-accent: #212121;
+
+         /* SURFACE & BACKGROUND */
          --color-surface: #262320;
-         --color-text: #f3f2f0;
-         --color-text-muted: #c9c3bd;
-         --color-secondary: #3a352f;
-         --color-accent: #e08946;
-         --color-accent-2: #f09a59;
+         /* Dark surface for cards/sheets */
+         --color-neutral-bg: #1f1d1b;
+         /* Deep background color */
+
+         /* TEXT & ICONOGRAPHY */
+         --color-text: #FFFFFF;
+         /* General body text (White) */
+         --color-text-muted: #C9C3BD;
+         /* Secondary text, hints */
+
+         /* UTILITY */
+         --color-error: #FFB4AB;
+         /* Accessible light error red */
      }
  }
 

@@ -8,11 +8,28 @@
     <link rel="stylesheet" type="" href="./popup.css">
 </head>
 
-<body>
+<body class="popup-container">
     <h2>Focus Hoot</h2>
-    <input id="goal" placeholder="What are you focusing on?" />
-    <input id="timer" type="number" placeholder="Minutes" value="25" />
-    <button id="startBtn">Start Session</button>
+    <form class="form-container">
+        <textarea id="goal" placeholder="What are you focusing on in this session?" rows="4"></textarea>
+        <div id="timerDisplay">
+            <div id="timeInputs">
+                <input type="number" id="hours" min="0" max="23" value="00">
+                <span>:</span>
+                <input type="number" id="minutes" min="0" max="59" value="25">
+                <span>:</span>
+                <input type="number" id="seconds" min="0" max="59" value="00">
+            </div>
+
+            <span class="timerLabels">
+                <span>hours</span>
+                <span>minutes</span>
+                <span>seconds</span>
+            </span>
+        </div>
+        <button id="startBtn">Start Session</button>
+
+    </form>
     <script type="module" src="popup.js"></script>
 </body>
 

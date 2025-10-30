@@ -1,22 +1,44 @@
 
-console.log("Content script loaded on", window.location.href);
+console.log("[Focus Hoot] Content script loaded.");
 
-import { sendMessage } from "../utils/messaging.js";
+// --- Messaging helper ---
+function sendMessage(type, data = {}) {
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({ type, data }, resolve);
+    });
+}
 
-console.log("[Focus Hoot] Content script active.");
+// --- Wait for an element to exist (async) ---
+function waitForElement(selector, timeout = 5000) {
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            const el = document.querySelector(selector);
+            if (el) {
+                clearInterval(interval);
+                resolve(el);
+            }
+        }, 100);
 
-// --- Get video metadata ---
-function getVideoMetadata() {
-    const titleEl = document.querySelector("h1.title, h1.ytd-watch-metadata");
-    const descEl = document.querySelector("#description, #description-inline-expander");
-    const title = titleEl ? titleEl.innerText.trim() : document.title;
-    const description = descEl ? descEl.innerText.trim().slice(0, 300) : "";
-    const url = window.location.href;
+        setTimeout(() => {
+            clearInterval(interval);
+            resolve(null); // fallback
+        }, timeout);
+    });
+}
+
+// --- Scrape YouTube video metadata safely ---
+async function getVideoMetadataAsync() {
+    const titleEl = await waitForElement("h1.title, h1.ytd-watch-metadata");
+    const descEl = await waitForElement("#description, #description-inline-expander");
+
+    const title = titleEl && titleEl.innerText ? titleEl.innerText.trim() : document.title || "";
+    const description = descEl && descEl.innerText ? descEl.innerText.trim().slice(0, 300) : "";
+    const url = window.location.href || "";
 
     return { title, desc: description, url };
 }
 
-// --- Overlay when checking ---
+// --- Overlay UI ---
 function showOverlay(message = "Analyzing content...") {
     let overlay = document.createElement("div");
     overlay.id = "focushoot-overlay";
@@ -37,7 +59,6 @@ function showOverlay(message = "Analyzing content...") {
     return overlay;
 }
 
-// --- Remove overlay ---
 function removeOverlay() {
     const overlay = document.getElementById("focushoot-overlay");
     if (overlay) overlay.remove();
@@ -45,16 +66,16 @@ function removeOverlay() {
 
 // --- Main runner ---
 async function runAnalysis() {
-    const meta = getVideoMetadata();
     const overlay = showOverlay("🦉 Focus Hoot is checking your focus...");
 
     try {
+        const meta = await getVideoMetadataAsync();
         const response = await sendMessage("PAGE_METADATA", meta);
         removeOverlay();
 
         if (response.status === "block") {
             console.warn("[Focus Hoot] AI decided to block this video.");
-            // background.js handles redirect — we stop here
+            // Background script handles the redirect to dynamic-block.html
         } else {
             console.log("[Focus Hoot] Video allowed ✅");
         }
@@ -64,10 +85,11 @@ async function runAnalysis() {
     }
 }
 
-// --- Trigger once the page loads ---
+// --- Trigger analysis on YouTube watch pages ---
 window.addEventListener("load", () => {
     if (window.location.href.includes("watch")) {
-        setTimeout(runAnalysis, 2000); // small delay for metadata to load
+        // small delay to ensure metadata loads
+        setTimeout(runAnalysis, 2000);
     }
 });
 

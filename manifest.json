@@ -13,7 +13,7 @@
         }
     },
     "background": {
-        "service_worker": "background/background.js",
+        "service_worker": "background.js",
         "type": "module"
     },
     "content_scripts": [
@@ -26,14 +26,16 @@
             ],
             "css": [
                 "content/overlay.css"
-            ]
+            ],
+            "type": "module"
         }
     ],
     "permissions": [
         "storage",
         "tabs",
         "scripting",
-        "activeTab"
+        "activeTab",
+        "alarms"
     ],
     "host_permissions": [
         "*://*.youtube.com/*",

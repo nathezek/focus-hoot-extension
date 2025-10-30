@@ -17,6 +17,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     roastEl.innerText = getRoast();
     reasonEl.innerText = `🧠 Reason: ${lastBlock.reason}`;
     goalEl.innerText = `🎯 Your Goal: ${lastBlock.goal}`;
-    videoEl.innerText = `📺 Blocked Video: ${lastBlock.title}`;
+    videoEl.innerText = `📺 Blocked: ${lastBlock.title}`;
 });
 

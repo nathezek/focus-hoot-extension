@@ -1,33 +1,182 @@
-body.popup-html {
+:root {
+    /*
+  |-------------------------------------|
+  | LIGHT THEME (Default)               |
+  |-------------------------------------|
+  */
+
+    /* PRIMARY COLOR (Owl Head Brown: #A66B3F) */
+    --color-primary: #A66B3F;
+    --color-primary-light: #DB9A6E;
+    --color-primary-dark: #73482A;
+    --color-on-primary: #FFFFFF;
+    /* White text/icons on primary */
+
+    /* SECONDARY/SURFACE COLOR (Owl Face/Feathers: #F7DDA4) */
+    --color-secondary: #F7DDA4;
+    --color-secondary-dark: #C0AC78;
+    --color-on-secondary: #212121;
+    /* Dark text/icons on secondary */
+
+    /* ACCENT/ACTION COLOR (Owl Beak Orange: #F28D30) */
+    --color-accent: #F28D30;
+    --color-accent-light: #FFBE62;
+    --color-on-accent: #FFFFFF;
+
+    /* SURFACE & BACKGROUND */
+    --color-surface: #FFFFFF;
+    /* Cards, sheets, menus */
+    --color-neutral-bg: #FFFDF7;
+    /* Main window background (off-white) */
+
+    /* TEXT & ICONOGRAPHY */
+    --color-text: #212121;
+    /* General body text (Dark Gray) */
+    --color-text-muted: #575655;
+    /* Secondary text, hints */
+
+    /* UTILITY */
+    --color-error: #B00020;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /*
+    |-------------------------------------|
+    | DARK THEME                          |
+    |-------------------------------------|
+    */
+
+        /* PRIMARY COLOR (Brighter Brown: #DB9A6E) */
+        --color-primary: #DB9A6E;
+        --color-primary-light: #FFC99C;
+        --color-primary-dark: #A66B3F;
+        --color-on-primary: #212121;
+        /* Dark text/icons on primary */
+
+        /* SECONDARY/SURFACE COLOR (Darker Brown: #401F00) */
+        --color-secondary: #401F00;
+        --color-secondary-dark: #331A00;
+        --color-on-secondary: #FFFFFF;
+        /* White text/icons on secondary */
+
+        /* ACCENT/ACTION COLOR (Brighter Orange: #FFBE62) */
+        --color-accent: #FFBE62;
+        --color-accent-light: #FFE9B3;
+        --color-on-accent: #212121;
+
+        /* SURFACE & BACKGROUND */
+        --color-surface: #262320;
+        /* Dark surface for cards/sheets */
+        --color-neutral-bg: #1f1d1b;
+        /* Deep background color */
+
+        /* TEXT & ICONOGRAPHY */
+        --color-text: #FFFFFF;
+        /* General body text (White) */
+        --color-text-muted: #C9C3BD;
+        /* Secondary text, hints */
+
+        /* UTILITY */
+        --color-error: #FFB4AB;
+        /* Accessible light error red */
+    }
+}
+
+
+body.popup-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: start;
     height: 32em;
-    width: 28em;
+    width: 24em;
+    padding: 1em 2.4em;
 
 }
 
-body.popup-html .form-container {
+body.popup-container .form-container {
     width: 100%;
     height: auto;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5em 0;
+    gap: 0.8em 0;
+    align-items: center;
 }
 
-input {
-    border: 1px solid var(--color-accent-2);
+.popup-container .form-container textarea {
+    border: 1px solid #444;
     border-radius: 8px;
-    padding: 4px;
-    height: 2em;
-    background: transparent;
+    padding: 1.4em;
+    width: 100%;
+    background: var(--color-surface);
+    outline: none;
     color: var(--color-text);
+
+
 }
 
-button {
-    height: 2em;
-    width: 100%;
+textarea::-webkit-scrollbar {
+    width: 0px;
+}
 
+.popup-container .form-container #startBtn {
+    height: 2.8em;
+    border-radius: 0.4em;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    width: 100%;
+    border: none;
+    font-size: 14.4px;
+    cursor: pointer;
+    letter-spacing: -0.4px;
+    font-weight: 500;
+    margin-top: 2em;
+
+}
+
+.form-container #timerDisplay .timerLabels {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    opacity: 64%;
+    gap: 0 7.2em;
+    padding-left: 0.4em;
+}
+
+.form-container #timerDisplay #timeInputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5.6em;
+    letter-spacing: -0.8px;
+    color: #888;
+    font-weight: 700;
+}
+
+/* Style each input to blend in like text */
+#timeInputs input {
+    width: 1.2em;
+    text-align: center;
+    font-size: inherit;
+    font-weight: inherit;
+    border: none;
+    background: transparent;
+    color: inherit;
+    outline: none;
+}
+
+/* Remove number spinners for Chrome/Safari */
+#timeInputs input::-webkit-outer-spin-button,
+#timeInputs input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Style the colon separator */
+#timeInputs span {
+    font-weight: inherit;
+    font-size: inherit;
+    color: #444;
 }
