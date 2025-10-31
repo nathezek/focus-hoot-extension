@@ -1,3 +1,4 @@
+
 console.log("Countdown timer module loaded.");
 
 const goalInput = document.getElementById("goal");
@@ -6,9 +7,16 @@ const minutesInput = document.getElementById("minutes");
 const secondsInput = document.getElementById("seconds");
 const startBtn = document.getElementById("startBtn");
 
+// New dynamic goal display
+let goalDisplay = document.createElement("p");
+goalDisplay.id = "goalDisplay";
+goalDisplay.classList.add("goal-display");
+goalDisplay.style.display = "none"; // hidden by default
+goalInput.insertAdjacentElement("afterend", goalDisplay);
+
 let countdownInterval;
 
-// -------------------- Helper Functions --------------------
+// -------------------- Helpers --------------------
 
 function saveState(state) {
     chrome.storage.local.set(state);
@@ -32,6 +40,22 @@ function updateTimerUI(remaining) {
     secondsInput.value = format(seconds);
 }
 
+// -------------------- UI Helpers --------------------
+
+function showGoalDisplay(goal) {
+    goalDisplay.textContent = `🎯 ${goal}`;
+    goalDisplay.style.display = "block";
+    goalInput.style.display = "none";
+    startBtn.style.display = "none";
+}
+
+function resetUI() {
+    goalDisplay.style.display = "none";
+    goalInput.style.display = "block";
+    startBtn.style.display = "block";
+    goalInput.value = "";
+}
+
 // -------------------- Countdown Logic --------------------
 
 function startCountdown(endTime) {
@@ -40,22 +64,23 @@ function startCountdown(endTime) {
     countdownInterval = setInterval(() => {
         const remaining = Math.floor((endTime - Date.now()) / 1000);
 
-        // When time is up
         if (remaining <= 0) {
             clearInterval(countdownInterval);
             updateTimerUI(0);
 
-            // 🧹 Clear the goal input & reset state in storage
-            goalInput.value = "";
+            // 🧹 Clear session state
             chrome.storage.local.remove(["goal", "endTime", "isRunning"], () => {
                 console.log("Session data cleared.");
             });
+
+            // 🧽 Reset UI
+            resetUI();
 
             // 🥳 Visual feedback
             startBtn.textContent = "Session Complete 🎉";
             setTimeout(() => (startBtn.textContent = "Start Session"), 2000);
 
-            // 🔔 Optional: Play sound or trigger notification
+            // 🔔 Sound or notification
             try {
                 const sound = new Audio("ding.mp3");
                 sound.play();
@@ -73,11 +98,14 @@ function startCountdown(endTime) {
 // -------------------- Initialization --------------------
 
 loadState((data) => {
-    if (data.goal) goalInput.value = data.goal;
+    if (data.goal) {
+        goalInput.value = data.goal;
+    }
 
     if (data.isRunning && data.endTime) {
         const remaining = Math.floor((data.endTime - Date.now()) / 1000);
         if (remaining > 0) {
+            showGoalDisplay(data.goal || "Focusing...");
             updateTimerUI(remaining);
             startCountdown(data.endTime);
         }
@@ -101,16 +129,16 @@ startBtn.addEventListener("click", () => {
     const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
     if (totalSeconds <= 0) {
-        alert("Please set a valid duration for your session.");
+        alert("Please set a valid session duration.");
         return;
     }
 
     const endTime = Date.now() + totalSeconds * 1000;
-    saveState({ endTime, isRunning: true, goal });
 
-    // ⏰ Create alarm for background.js
+    saveState({ endTime, isRunning: true, goal });
     chrome.alarms.create("focusSessionEnd", { when: endTime });
 
+    showGoalDisplay(goal);
     startCountdown(endTime);
 });
 
