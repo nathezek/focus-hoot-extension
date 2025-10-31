@@ -7,16 +7,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #B00020 0%, #73482A 50%, #401F00 100%);
+    background: var(--color-surface);
 }
 
 .static-block-container {
-    background: var(--color-surface);
-    border-radius: 24px;
     padding: 3em 2.5em;
     max-width: 600px;
     width: 90%;
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
     text-align: center;
     animation: shake 0.5s ease;
 }

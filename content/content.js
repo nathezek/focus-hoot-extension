@@ -10,19 +10,18 @@ let currentVideoId = null;
  * Show analyzing overlay
  */
 function showAnalyzingOverlay() {
-    // Remove existing overlay if present
     hideAnalyzingOverlay();
 
     const overlay = document.createElement("div");
     overlay.className = "focus-hoot-overlay";
     overlay.id = "focusHootOverlay";
 
-    const iconUrl = chrome.runtime.getURL("assets/icons/android-chrome-512x512.png");
+    const iconUrl = chrome.runtime.getURL("assets/icons/favicon-32x32.png");
 
     overlay.innerHTML = `
         <div class="focus-hoot-modal">
             <img src="${iconUrl}" alt="Focus Hoot">
-            <h2>Hold on a sec!</h2>
+            <h2>Hold on a sec! 🦉</h2>
             <p>Let me check if this matches your goal...</p>
             <div class="focus-hoot-spinner"></div>
         </div>
@@ -42,92 +41,130 @@ function hideAnalyzingOverlay() {
 }
 
 /**
- * Wait for element to appear on page
+ * Wait for video title to be loaded and NOT be a placeholder
  */
-function waitForElement(selector, timeout = 10000) {
+function waitForRealTitle(maxAttempts = 30, intervalMs = 200) {
     return new Promise((resolve, reject) => {
-        const element = document.querySelector(selector);
-        if (element) {
-            resolve(element);
-            return;
-        }
+        let attempts = 0;
 
-        const observer = new MutationObserver((mutations, obs) => {
-            const element = document.querySelector(selector);
-            if (element) {
-                obs.disconnect();
-                resolve(element);
+        const checkTitle = () => {
+            attempts++;
+
+            const titleSelectors = [
+                'h1.ytd-watch-metadata yt-formatted-string',
+                'ytd-watch-metadata h1 yt-formatted-string',
+                'h1 yt-formatted-string'
+            ];
+
+            for (const selector of titleSelectors) {
+                const element = document.querySelector(selector);
+                if (element) {
+                    const text = element.textContent?.trim();
+                    // Make sure it's not empty and not a placeholder
+                    if (text && text.length > 0 && !text.includes('…')) {
+                        console.log(`✅ Real title found: "${text}"`);
+                        resolve(element);
+                        return;
+                    }
+                }
             }
-        });
 
-        // Only observe if document.body exists
-        if (document.body) {
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        } else {
-            reject(new Error("document.body not available"));
-        }
+            if (attempts >= maxAttempts) {
+                console.warn(`⚠️ Title not found after ${maxAttempts} attempts`);
+                reject(new Error("Title not loaded"));
+                return;
+            }
 
-        setTimeout(() => {
-            observer.disconnect();
-            reject(new Error(`Element ${selector} not found within ${timeout}ms`));
-        }, timeout);
+            console.log(`⏳ Attempt ${attempts}/${maxAttempts} - waiting for title...`);
+            setTimeout(checkTitle, intervalMs);
+        };
+
+        checkTitle();
     });
 }
 
 /**
- * Extract video metadata from YouTube page
+ * Extract video metadata - ONLY when elements are actually loaded
  */
 async function extractVideoMetadata(videoId) {
-    console.log("📊 Waiting for video metadata to load...");
+    console.log("📊 Extracting metadata for video:", videoId);
 
     try {
-        // Wait for title to appear
-        await waitForElement('h1.ytd-watch-metadata yt-formatted-string, h1 yt-formatted-string', 5000);
+        // WAIT for the real title to appear (up to 6 seconds)
+        await waitForRealTitle(30, 200);
 
-        // Give extra time for all elements
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Give a bit more time for other elements to populate
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        const titleElement =
-            document.querySelector('h1.ytd-watch-metadata yt-formatted-string') ||
-            document.querySelector('h1 yt-formatted-string') ||
-            document.querySelector('h1.title') ||
-            document.querySelector('#title h1');
+        // Now extract everything
+        const titleSelectors = [
+            'h1.ytd-watch-metadata yt-formatted-string',
+            'ytd-watch-metadata h1 yt-formatted-string',
+            'h1 yt-formatted-string'
+        ];
 
-        const channelElement =
-            document.querySelector('ytd-channel-name#channel-name a') ||
-            document.querySelector('#owner-name a') ||
-            document.querySelector('ytd-video-owner-renderer a');
+        let titleElement = null;
+        for (const selector of titleSelectors) {
+            titleElement = document.querySelector(selector);
+            if (titleElement?.textContent?.trim()) {
+                break;
+            }
+        }
 
-        const descriptionElement =
-            document.querySelector('ytd-text-inline-expander#description-inline-expander yt-attributed-string span') ||
-            document.querySelector('#description yt-formatted-string') ||
-            document.querySelector('#snippet-text');
+        const channelSelectors = [
+            'ytd-channel-name#channel-name yt-formatted-string a',
+            'ytd-channel-name#channel-name a',
+            '#channel-name a',
+            'ytd-video-owner-renderer a'
+        ];
 
-        const title = titleElement?.textContent?.trim() || "Unknown Video";
-        const channel = channelElement?.textContent?.trim() || "Unknown Channel";
+        let channelElement = null;
+        for (const selector of channelSelectors) {
+            channelElement = document.querySelector(selector);
+            if (channelElement?.textContent?.trim()) {
+                break;
+            }
+        }
+
+        const descriptionSelectors = [
+            'ytd-text-inline-expander#description-inline-expander yt-attributed-string span',
+            '#description yt-attributed-string',
+            'ytd-expandable-video-description-body-renderer yt-attributed-string'
+        ];
+
+        let descriptionElement = null;
+        for (const selector of descriptionSelectors) {
+            descriptionElement = document.querySelector(selector);
+            if (descriptionElement?.textContent?.trim()) {
+                break;
+            }
+        }
+
+        const title = titleElement?.textContent?.trim() || "";
+        const channel = channelElement?.textContent?.trim() || "";
         const description = descriptionElement?.textContent?.trim()?.substring(0, 500) || "";
 
-        console.log("✅ Extracted metadata:", { title, channel });
+        console.log("📊 Extracted:");
+        console.log("  ✓ Title:", title);
+        console.log("  ✓ Channel:", channel);
+        console.log("  ✓ Description:", description ? `${description.substring(0, 50)}...` : "(none)");
+
+        // VERIFY we got real data
+        if (!title || title.length < 3) {
+            throw new Error("Title too short or missing");
+        }
 
         return {
             videoId: videoId,
             title: title,
-            channel: channel,
+            channel: channel || "Unknown Channel",
             description: description,
             url: window.location.href
         };
     } catch (error) {
-        console.error("❌ Error extracting metadata:", error);
-        return {
-            videoId: videoId,
-            title: "Unknown Video",
-            channel: "Unknown Channel",
-            description: "",
-            url: window.location.href
-        };
+        console.error("❌ Failed to extract metadata:", error);
+        // Return null to indicate failure (don't analyze with bad data)
+        return null;
     }
 }
 
@@ -165,28 +202,23 @@ async function checkVideoAccess() {
         return;
     }
 
-    // If same video as current, skip
     if (videoId === currentVideoId) {
         console.log("ℹ️ Same video, skipping analysis");
         return;
     }
 
-    // Update current video
     currentVideoId = videoId;
 
-    // If already analyzed this video, skip
     if (videoId === lastAnalyzedVideoId) {
         console.log("ℹ️ Already analyzed this video:", videoId);
         return;
     }
 
-    // If already analyzing, skip
     if (isAnalyzing) {
         console.log("⏳ Already analyzing another video");
         return;
     }
 
-    // Check if session is running
     chrome.storage.local.get(["isRunning", "goal"], async (data) => {
         if (chrome.runtime.lastError) {
             console.error("❌ Storage error:", chrome.runtime.lastError);
@@ -203,17 +235,23 @@ async function checkVideoAccess() {
         isAnalyzing = true;
         lastAnalyzedVideoId = videoId;
 
-        // Pause video immediately
         pauseVideo();
-
-        // Show overlay
         showAnalyzingOverlay();
 
         try {
-            // Extract metadata
+            // Extract metadata - will wait for real data
             const metadata = await extractVideoMetadata(videoId);
 
-            // Send to background for AI analysis
+            // If metadata extraction failed, ALLOW the video (fail open)
+            if (!metadata || !metadata.title || metadata.title.length < 3) {
+                console.warn("⚠️ Could not get valid metadata, ALLOWING video");
+                isAnalyzing = false;
+                hideAnalyzingOverlay();
+                return;
+            }
+
+            console.log("📤 Sending to background for analysis:", metadata);
+
             chrome.runtime.sendMessage({
                 action: "analyzeVideo",
                 videoData: metadata,
@@ -224,15 +262,18 @@ async function checkVideoAccess() {
 
                 if (chrome.runtime.lastError) {
                     console.error("❌ Message error:", chrome.runtime.lastError);
-                    // Allow video if communication fails
                     return;
                 }
 
+                console.log("📥 Received response:", response);
+
                 if (response && !response.allowed) {
                     console.log("🚫 Video blocked:", response.reason);
-                    // Redirect to block page
                     const blockUrl = chrome.runtime.getURL("block/dynamic-block.html") +
-                        `?videoId=${videoId}&title=${encodeURIComponent(metadata.title)}&reason=${encodeURIComponent(response.reason)}`;
+                        `?videoId=${encodeURIComponent(videoId)}` +
+                        `&title=${encodeURIComponent(metadata.title)}` +
+                        `&channel=${encodeURIComponent(metadata.channel)}` +
+                        `&reason=${encodeURIComponent(response.reason)}`;
                     window.location.href = blockUrl;
                 } else {
                     console.log("✅ Video allowed");
@@ -240,6 +281,7 @@ async function checkVideoAccess() {
             });
         } catch (error) {
             console.error("❌ Error during video analysis:", error);
+            console.warn("⚠️ Analysis failed, ALLOWING video");
             isAnalyzing = false;
             hideAnalyzingOverlay();
         }
@@ -258,16 +300,17 @@ function onUrlChange() {
         console.log("🔄 URL changed:", currentUrl);
         lastUrl = currentUrl;
 
-        // Reset state when leaving video page
         if (!currentUrl.includes('/watch?v=')) {
             currentVideoId = null;
             isAnalyzing = false;
             hideAnalyzingOverlay();
             console.log("📍 Not on video page, resetting state");
         } else {
-            // New video detected
             console.log("🎬 New video detected, checking access...");
-            checkVideoAccess();
+            // Add a small delay to let YouTube start loading
+            setTimeout(() => {
+                checkVideoAccess();
+            }, 300);
         }
     }
 }
@@ -276,7 +319,6 @@ function onUrlChange() {
  * Initialize URL change detection
  */
 function initializeUrlDetection() {
-    // Wait for document.body to be available
     if (!document.body) {
         console.log("⏳ Waiting for document.body...");
         const bodyObserver = new MutationObserver(() => {
@@ -297,12 +339,9 @@ function initializeUrlDetection() {
  * Setup all URL detection methods
  */
 function setupUrlDetection() {
-    // Method 1: MutationObserver for DOM changes
     const observer = new MutationObserver(onUrlChange);
     observer.observe(document.body, { subtree: true, childList: true });
-    console.log("✅ MutationObserver set up");
 
-    // Method 2: Intercept pushState and replaceState
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
 
@@ -315,21 +354,15 @@ function setupUrlDetection() {
         originalReplaceState.apply(this, arguments);
         onUrlChange();
     };
-    console.log("✅ History API intercepted");
 
-    // Method 3: Listen for popstate
     window.addEventListener('popstate', onUrlChange);
-    console.log("✅ Popstate listener added");
 
-    // Method 4: Periodic check (backup)
     setInterval(() => {
         if (location.href !== lastUrl) {
             onUrlChange();
         }
     }, 500);
-    console.log("✅ Periodic URL check started");
 
-    // Initial check if we're already on a video page
     if (window.location.href.includes('/watch?v=')) {
         console.log("🎬 Initial video page detected");
         setTimeout(() => {
@@ -338,7 +371,6 @@ function setupUrlDetection() {
     }
 }
 
-// Start initialization
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeUrlDetection);
 } else {

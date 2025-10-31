@@ -1,64 +1,27 @@
 // /ai/block-list-generator.js
 
-import { getGeminiClient } from './gemini-client.js';
-
-// Core distractions that are ALWAYS blocked
-const ALWAYS_BLOCK = [
+// Sites that are ALWAYS blocked when a session starts
+const STATIC_BLOCK_LIST = [
     "instagram.com",
     "tiktok.com",
     "facebook.com",
     "twitter.com",
     "x.com",
-    "reddit.com"
+    "reddit.com",
+    "snapchat.com",
+    "netflix.com",
+    "hulu.com",
+    "twitch.tv",
+    "discord.com"
 ];
 
 /**
- * Generate a list of sites to fully block based on user's goal
- * @param {string} goal - User's focus goal
- * @param {number} durationMinutes - Session duration
+ * Get the static block list (no AI involved)
  * @returns {Promise<string[]>} - Array of domains to block
  */
-export async function generateBlockList(goal, durationMinutes) {
-    const client = await getGeminiClient();
-
-    const prompt = `You are Focus Hoot, an AI productivity assistant that helps users stay focused.
-
-A user wants to focus on: "${goal}"
-Session duration: ${durationMinutes} minutes
-
-Based on this goal, generate a JSON array of additional website domains that should be blocked during this session.
-
-NOTE: Instagram, TikTok, Facebook, Twitter, and Reddit are ALREADY being blocked automatically.
-
-Rules:
-1. Only suggest ADDITIONAL distracting websites beyond the core social media platforms
-2. Focus on: streaming sites (Netflix, Hulu), shopping (Amazon), entertainment news, gaming sites, etc.
-3. Return domains in format: ["domain1.com", "domain2.com"]
-4. DO NOT include: youtube.com (handled separately), work tools, or sites needed for the goal
-5. Include only the domain (no protocol, no www, no paths)
-6. Consider the goal context - if they're learning web dev, don't block documentation sites
-
-Return ONLY a valid JSON array of strings, nothing else.
-
-Example output:
-["netflix.com", "twitch.tv", "espn.com", "buzzfeed.com"]`;
-
-    try {
-        const result = await client.generateJSON(prompt);
-
-        // Ensure result is an array
-        const additionalBlocks = Array.isArray(result) ? result : [];
-
-        // Combine with always-blocked sites
-        const fullBlockList = [...ALWAYS_BLOCK, ...additionalBlocks];
-
-        console.log("Generated block list:", fullBlockList);
-        return fullBlockList;
-    } catch (error) {
-        console.error("Error generating block list:", error);
-        // Return default block list as fallback
-        return ALWAYS_BLOCK;
-    }
+export async function generateBlockList() {
+    console.log("🔒 Using static block list:", STATIC_BLOCK_LIST);
+    return STATIC_BLOCK_LIST;
 }
 
 /**
@@ -66,18 +29,27 @@ Example output:
  * @param {string[]} blockList 
  */
 export async function activateBlockList(blockList) {
-    // Save to storage
+    console.log("💾 Activating block list:", blockList);
+
     await chrome.storage.local.set({
         activeBlockList: blockList,
         blockListActive: true
     });
 
-    console.log("Block list activated:", blockList);
+    console.log("✅ Saved to storage");
 
-    // Send message to background to enable blocking
-    chrome.runtime.sendMessage({
-        action: "updateBlockList",
-        blockList: blockList
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            action: "updateBlockList",
+            blockList: blockList
+        }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("❌ Error sending to background:", chrome.runtime.lastError);
+            } else {
+                console.log("✅ Background notified:", response);
+            }
+            resolve();
+        });
     });
 }
 
@@ -85,13 +57,20 @@ export async function activateBlockList(blockList) {
  * Deactivate blocking when session ends
  */
 export async function deactivateBlockList() {
+    console.log("🔓 Deactivating block list");
+
     await chrome.storage.local.set({
-        blockListActive: false
+        blockListActive: false,
+        activeBlockList: []
     });
 
     chrome.runtime.sendMessage({
         action: "clearBlockList"
+    }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.error("❌ Error clearing block list:", chrome.runtime.lastError);
+        }
     });
 
-    console.log("Block list deactivated");
+    console.log("✅ Block list deactivated");
 }

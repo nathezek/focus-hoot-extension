@@ -37,15 +37,14 @@ startBtn.addEventListener("click", async () => {
     }
 
     // Disable button
-    startBtn.textContent = "🦉 Generating block list...";
+    startBtn.textContent = "Starting session...";
     startBtn.disabled = true;
 
     try {
-        // Generate AI block list
-        const totalMinutes = Math.ceil(totalSeconds / 60);
-        const blockList = await generateBlockList(goal, totalMinutes);
+        // Get static block list (no AI needed)
+        const blockList = await generateBlockList();
 
-        console.log("📋 Block list generated:", blockList);
+        console.log("📋 Block list:", blockList);
 
         // Activate blocking
         await activateBlockList(blockList);
@@ -61,10 +60,6 @@ startBtn.addEventListener("click", async () => {
             sessionBlockList: blockList
         });
 
-        // Verify save
-        const verification = await chrome.storage.local.get(["activeBlockList", "blockListActive"]);
-        console.log("✅ Verification after save:", verification);
-
         // Schedule alarm in background
         chrome.runtime.sendMessage({
             action: "scheduleAlarm",
@@ -75,15 +70,11 @@ startBtn.addEventListener("click", async () => {
 
         startBtn.textContent = "Session Started! ✅";
 
-        // Show what's being blocked
-        const topSites = blockList.slice(0, 6).join(', ');
-        alert(`✅ Session started!\n\n🚫 Blocking ${blockList.length} sites:\n${topSites}${blockList.length > 6 ? '...' : ''}\n\n📺 YouTube videos will be analyzed in real-time.`);
-
-        setTimeout(() => window.close(), 1500);
+        setTimeout(() => window.close(), 1000);
 
     } catch (error) {
         console.error("Error starting session:", error);
-        alert("Failed to start session. Check your API key in settings and try again.");
+        alert("Failed to start session. Please try again.");
         startBtn.textContent = "Start Session";
         startBtn.disabled = false;
     }
