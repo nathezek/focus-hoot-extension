@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>MindTrackr</title>
-    <link rel="stylesheet" href="popup.css">
-    <link rel="stylesheet" type="" href="../globals.css">
-    <link rel="stylesheet" type="" href="./popup.css">
+    <meta charset="UTF-8">
+    <title>Focus Hoot</title>
+    <link rel="stylesheet" href="../globals.css" />
+    <link rel="stylesheet" href="popup.css" />
 </head>
 
 <body class="popup-container">
     <h2>Focus Hoot</h2>
+
     <form class="form-container">
-        <textarea id="goal" placeholder="What are you focusing on in this session?" rows="4"></textarea>
+        <textarea id="goal" placeholder="What are you focusing on this session?" rows="4"></textarea>
+
         <div id="timerDisplay">
             <div id="timeInputs">
                 <input type="number" id="hours" min="0" max="23" value="00">
@@ -20,17 +24,21 @@
                 <span>:</span>
                 <input type="number" id="seconds" min="0" max="59" value="00">
             </div>
-
             <span class="timerLabels">
                 <span>hours</span>
                 <span>minutes</span>
                 <span>seconds</span>
             </span>
         </div>
-        <button id="startBtn">Start Session</button>
 
+        <button id="startBtn">Start Session</button>
     </form>
+
+    <!-- Load popup logic first -->
     <script type="module" src="popup.js"></script>
+
+    <!-- Then load countdown timer logic -->
+    <script type="module" src="countdown-timer.js"></script>
 </body>
 
 </html>

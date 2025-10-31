@@ -108,7 +108,7 @@ body.popup-container .form-container {
 .popup-container .form-container textarea {
     border: 1px solid #444;
     border-radius: 8px;
-    padding: 1.4em;
+    padding: 1em;
     width: 100%;
     background: var(--color-surface);
     outline: none;
