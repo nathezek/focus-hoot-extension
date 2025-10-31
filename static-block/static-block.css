@@ -1,4 +1,4 @@
-/* block/block.css */
+/* /static-block/static-block.css */
 
 body {
     margin: 0;
@@ -7,64 +7,74 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-surface);
+    background: linear-gradient(135deg, #B00020 0%, #73482A 50%, #401F00 100%);
 }
 
-.block-container {
+.static-block-container {
+    background: var(--color-surface);
+    border-radius: 24px;
     padding: 3em 2.5em;
     max-width: 600px;
     width: 90%;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
     text-align: center;
-    animation: slideIn 0.4s ease-out;
+    animation: shake 0.5s ease;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.owl-icon {
-    margin-bottom: 1.5em;
-    animation: bounce 2s infinite;
-}
-
-.owl-icon img {
-    width: 64px;
-    height: 64px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-}
-
-@keyframes bounce {
+@keyframes shake {
 
     0%,
     100% {
-        transform: translateY(0);
+        transform: translateX(0);
     }
 
-    50% {
-        transform: translateY(-10px);
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.owl-header {
+    margin-bottom: 2em;
+}
+
+.owl-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1em;
+    animation: wobble 3s infinite;
+}
+
+@keyframes wobble {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-15deg);
+    }
+
+    75% {
+        transform: rotate(15deg);
     }
 }
 
 h1 {
     color: var(--color-text);
-    font-size: 2em;
-    margin: 0 0 1.5em 0;
+    font-size: 2.2em;
+    margin: 0;
 }
 
-.goal-reminder {
-    background: var(--color-secondary);
-    border-left: 4px solid var(--color-accent);
-    padding: 1.2em;
-    border-radius: 12px;
-    margin-bottom: 2em;
+.blocked-site-info {
+    background: linear-gradient(135deg, #FF6B6B, #FFE66D);
+    padding: 1.5em;
+    border-radius: 16px;
+    margin-bottom: 1.5em;
 }
 
 .label {
@@ -76,6 +86,22 @@ h1 {
     letter-spacing: 0.5px;
 }
 
+.site-name {
+    font-size: 1.8em;
+    font-weight: 800;
+    color: #212121;
+    margin: 0;
+    text-decoration: line-through;
+}
+
+.goal-reminder {
+    background: var(--color-secondary);
+    border-left: 4px solid var(--color-accent);
+    padding: 1.2em;
+    border-radius: 12px;
+    margin-bottom: 2em;
+}
+
 .goal-text {
     font-size: 1.3em;
     font-weight: 700;
@@ -83,71 +109,41 @@ h1 {
     margin: 0;
 }
 
-.roast-section {
+.roast-container {
     background: var(--color-neutral-bg);
     border-radius: 16px;
     padding: 2em;
     margin-bottom: 2em;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
 }
 
-.loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1em;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--color-accent-light);
-    border-top-color: var(--color-accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.loader p {
-    color: var(--color-text-muted);
-    font-size: 0.95em;
-    font-style: italic;
+.roast-icon {
+    font-size: 3em;
+    margin-bottom: 0.5em;
 }
 
 .roast-text {
-    font-size: 1.2em;
+    font-size: 1.25em;
     line-height: 1.7;
     color: var(--color-text);
-    font-weight: 500;
+    font-weight: 600;
+    margin: 0;
 }
 
-.video-info {
-    background: var(--color-neutral-bg);
+.timer-section {
+    background: var(--color-primary-dark);
+    color: var(--color-on-primary);
     padding: 1.5em;
     border-radius: 12px;
     margin-bottom: 2em;
 }
 
-.video-title {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--color-text);
-    margin: 0.5em 0;
-}
-
-.reason {
-    font-size: 0.95em;
-    color: var(--color-text-muted);
-    font-style: italic;
+.time-remaining {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--color-accent-light);
     margin: 0.5em 0 0 0;
+    font-variant-numeric: tabular-nums;
 }
 
 .action-buttons {
@@ -189,13 +185,13 @@ h1 {
     transform: translateY(-2px);
 }
 
-.motivation {
+.stats-hint {
     padding-top: 1.5em;
     border-top: 1px solid var(--color-text-muted);
 }
 
-.motivation p {
+.stats-hint p {
     color: var(--color-text-muted);
-    font-size: 0.95em;
+    font-size: 0.9em;
     margin: 0;
 }

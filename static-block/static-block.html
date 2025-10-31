@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Hoot - Site Blocked</title>
+    <link rel="stylesheet" href="../globals.css">
+    <link rel="stylesheet" href="static-block.css">
+</head>
+
+<body>
+    <div class="static-block-container">
+        <div class="owl-header">
+            <img src="../assets/icons/favicon-32x32.png" alt="Focus Hoot" class="owl-icon">
+            <h1>🚫 Not So Fast!</h1>
+        </div>
+
+        <div class="blocked-site-info">
+            <p class="label">Blocked Site:</p>
+            <p id="siteName" class="site-name">...</p>
+        </div>
+
+        <div class="goal-reminder">
+            <p class="label">Your Current Goal:</p>
+            <p id="goalText" class="goal-text">...</p>
+        </div>
+
+        <div class="roast-container">
+            <div class="roast-icon">🦉</div>
+            <p id="roastText" class="roast-text"></p>
+        </div>
+
+        <div class="timer-section">
+            <p class="label">Session ends in:</p>
+            <p id="timeRemaining" class="time-remaining">...</p>
+        </div>
+
+        <div class="action-buttons">
+            <button id="goHome" class="btn-primary">Go to Safe Homepage</button>
+            <button id="endSession" class="btn-secondary">End Session</button>
+        </div>
+
+        <div class="stats-hint">
+            <p>💡 Tip: Your blocked attempts are being tracked in statistics</p>
+        </div>
+    </div>
+
+    <script src="static-block.js"></script>
+</body>
+
+</html>

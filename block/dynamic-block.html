@@ -1,22 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Blocked by Focus Hoot 🦉</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Hoot - Blocked!</title>
+    <link rel="stylesheet" href="../globals.css">
     <link rel="stylesheet" href="block.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>🦉 Focus Hoot says nope!</h1>
-        <p id="roast">Loading roast...</p>
-        <hr>
-        <p id="reason"></p>
-        <p id="goal"></p>
-        <p id="videoTitle"></p>
-        <button id="goBack">Go back to YouTube</button>
+    <div class="block-container">
+        <div class="owl-icon">
+            <img src="../assets/icons/favicon-32x32.png" alt="Focus Hoot">
+        </div>
+
+        <h1>🦉 Whoa there, friend!</h1>
+
+        <div class="goal-reminder">
+            <p class="label">Your Goal:</p>
+            <p id="goalText" class="goal-text">Loading...</p>
+        </div>
+
+        <div class="roast-section">
+            <div id="roastLoader" class="loader">
+                <div class="spinner"></div>
+                <p>Preparing your reality check...</p>
+            </div>
+            <p id="roastText" class="roast-text" style="display: none;"></p>
+        </div>
+
+        <div class="video-info">
+            <p class="label">You tried to watch:</p>
+            <p id="videoTitle" class="video-title"></p>
+            <p id="reason" class="reason"></p>
+        </div>
+
+        <div class="action-buttons">
+            <button id="goBack" class="btn-primary">Back to YouTube Home</button>
+            <button id="endSession" class="btn-secondary">End Session Early</button>
+        </div>
+
+        <div class="motivation">
+            <p>💪 You've got this! Stay focused on what matters.</p>
+        </div>
     </div>
-    <script type="module" src="dynamic-block.js"></script>
+
+    <script type="module" src="block.js"></script>
 </body>
 
 </html>

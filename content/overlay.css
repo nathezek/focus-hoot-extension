@@ -1,0 +1,96 @@
+/* content/overlay.css */
+
+.focus-hoot-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.focus-hoot-modal {
+    background: #1f1d1b;
+    color: white;
+    padding: 3em 2.5em;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.focus-hoot-modal img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.5em;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.focus-hoot-modal h2 {
+    font-size: 1.8em;
+    margin: 0 0 0.5em 0;
+    color: #FFBE62;
+}
+
+.focus-hoot-modal p {
+    font-size: 1.1em;
+    color: #C9C3BD;
+    margin: 0 0 1.5em 0;
+    line-height: 1.6;
+}
+
+.focus-hoot-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #444;
+    border-top-color: #FFBE62;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

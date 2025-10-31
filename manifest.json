@@ -27,7 +27,7 @@
             "css": [
                 "content/overlay.css"
             ],
-            "type": "module"
+            "run_at": "document_start"
         }
     ],
     "permissions": [
@@ -36,12 +36,14 @@
         "scripting",
         "activeTab",
         "alarms",
-        "notifications"
+        "notifications",
+        "webNavigation"
     ],
     "host_permissions": [
         "*://*.youtube.com/*",
         "*://*.tiktok.com/*",
-        "*://*.instagram.com/*"
+        "*://*.instagram.com/*",
+        "*://*/*"
     ],
     "icons": {
         "16": "assets/icons/favicon-16x16.png",
@@ -53,11 +55,14 @@
         {
             "resources": [
                 "block/dynamic-block.html",
-                "content/overlay.css"
+                "static-block/static-block.html",
+                "content/overlay.css",
+                "assets/icons/favicon-32x32.png"
             ],
             "matches": [
                 "<all_urls>"
             ]
         }
-    ]
+    ],
+    "options_page": "settings/settings.html"
 }

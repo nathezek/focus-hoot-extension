@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Hoot - Settings</title>
+    <link rel="stylesheet" href="../globals.css" />
+    <link rel="stylesheet" href="settings.css" />
+</head>
+
+<body>
+    <div class="settings-container">
+        <header>
+            <h1>🦉 Focus Hoot Settings</h1>
+            <p>Configure your AI-powered focus assistant</p>
+        </header>
+
+        <main>
+            <section class="api-key-section">
+                <h2>Gemini API Key</h2>
+                <p class="help-text">
+                    Get your free API key from
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+                </p>
+
+                <div class="input-group">
+                    <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" />
+                    <button id="toggleKeyVisibility">👁️</button>
+                </div>
+
+                <div class="button-group">
+                    <button id="saveApiKey" class="btn-primary">Save API Key</button>
+                    <button id="testApiKey" class="btn-secondary">Test Connection</button>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+            </section>
+
+            <section class="info-section">
+                <h2>How It Works</h2>
+                <ul>
+                    <li>🎯 Set your focus goal when starting a session</li>
+                    <li>🤖 AI generates a custom block list based on your goal</li>
+                    <li>📹 YouTube videos are analyzed in real-time</li>
+                    <li>🦉 Get roasted when you try to slack off!</li>
+                </ul>
+            </section>
+
+            <section class="danger-section">
+                <h2>Data & Privacy</h2>
+                <p>
+                    Your API key is stored locally on your device. Video metadata is sent to Google's Gemini API
+                    for analysis. No data is stored on external servers by Focus Hoot.
+                </p>
+                <button id="clearData" class="btn-danger">Clear All Extension Data</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Focus Hoot v1.0.0 | Made with 🦉 and ☕</p>
+        </footer>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+
+</html>
