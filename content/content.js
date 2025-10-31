@@ -17,12 +17,12 @@ function showAnalyzingOverlay() {
     overlay.className = "focus-hoot-overlay";
     overlay.id = "focusHootOverlay";
 
-    const iconUrl = chrome.runtime.getURL("assets/icons/favicon-32x32.png");
+    const iconUrl = chrome.runtime.getURL("assets/icons/android-chrome-512x512.png");
 
     overlay.innerHTML = `
         <div class="focus-hoot-modal">
             <img src="${iconUrl}" alt="Focus Hoot">
-            <h2>Hold on a sec! 🦉</h2>
+            <h2>Hold on a sec!</h2>
             <p>Let me check if this matches your goal...</p>
             <div class="focus-hoot-spinner"></div>
         </div>
